@@ -41,6 +41,20 @@ func deleteMovies(w http.ResponseWriter,r *http.Request){
 	json.NewEncoder(w).Encode(movies)
 }
 
+func getMovie(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type","application/json")
+	params := mux.Vars(r)
+	for _,item :=range movies {
+		if item.ID ==params["id"]{
+			json.NewEncoder(w).Encode(item)
+			return
+		}
+	}
+}
+
+
+
+
 func main() {
 	r:=mux.NewRouter()
 	movies=append(movies,Movie{ID: "1", Isbn:"4321234",Title:"Fight Club", Director:&Director{FirstName: "David", LastName: "Fincher"}})
