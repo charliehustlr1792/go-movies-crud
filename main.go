@@ -29,7 +29,7 @@ func getMovies(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(movies)
 }
 
-func deleteMovies(w http.ResponseWriter,r *http.Request){
+func deleteMovie(w http.ResponseWriter,r *http.Request){
 	w.Header().Set("Content-Type","application/json")
 	params := mux.Vars(r)
 	for index, item := range movies {
@@ -62,6 +62,25 @@ func createMovie(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(movie)//sends the json response
 }
 
+func updateMovie(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type","application/json") //set json content type
+	params:=mux.Vars(r) //get the parameters from the request
+	//loop over the movies range
+	//delete the movie with the id that you have sent
+	//add a new movie - in the body that we send
+	for index,item := range movies {
+		if item.ID==params["id"]{
+			movies=append(movies[:index], movies[index+1:]...)
+			var movie Movie
+			_=json.NewDecoder(r.Body).Decode(&movie)
+			movie.ID=params["id"]//we are enduring the id in the url takes priority not the one in the request body
+			movies=append(movies, movie)
+			json.NewEncoder(w).Encode(movie)
+			return 
+		}
+	}
+}
+
 func main() {
 	r:=mux.NewRouter()
 	movies=append(movies,Movie{ID: "1", Isbn:"4321234",Title:"Fight Club", Director:&Director{FirstName: "David", LastName: "Fincher"}})
@@ -74,6 +93,6 @@ func main() {
 
 
 	fmt.Printf("Starting server at port 8000 \n")
-	log.Fatal(http.ListenAndServer((":8000"),r))
+	log.Fatal(http.ListenAndServe(":8000", r))
 
 }
