@@ -53,7 +53,14 @@ func getMovie(w http.ResponseWriter, r *http.Request){
 }
 
 
-
+func createMovie(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type","application/json")
+	var movie Movie
+	_= json.NewDecoder(r.Body).Decode(&movie)//taking the json data from the request body and decoding it into the movie variable; _= part means ignoring the error returned by Decode
+	movie.ID=strconv.Itoa(rand.Intn(1000000))//generates a random movie id rand.Intn(1000000) gives a random number between 0 to 999999 strconv.Itoa converts that into a string
+	movies=append(movies, movie)//adds the movie
+	json.NewEncoder(w).Encode(movie)//sends the json response
+}
 
 func main() {
 	r:=mux.NewRouter()
